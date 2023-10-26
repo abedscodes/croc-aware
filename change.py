@@ -334,7 +334,7 @@ class GUI(object):
         self.treeloc.heading('locations',text='Location', anchor=W)
         self.treeloc.column('locations', stretch = False, width=250) 
         self.scrollbar = Scrollbar(master = self.windowloc, orient='vertical',command=self.treeloc.yview)
-        self.scrollbar.grid(row=6,column=0,sticky='nse')
+        self.scrollbar.grid(row=6,column=1,sticky='ns')
         
         sonar_index = self.match_sonar(sonar)
         
@@ -347,7 +347,7 @@ class GUI(object):
     
 
     def location_check(self):
-        if self.loc_field.get().isalpha() and len(self.loc_field.get())>0:
+        if self.loc_field.get().replace(" ","").isalpha() and len(self.loc_field.get())>0:
             return True
         else:
             return False
@@ -418,12 +418,23 @@ class GUI(object):
         self.empty_locations()
         self.viewLocations(sonar_index)              
     
+
     def viewLocations(self, sonar_idx):
         items = self.treeloc.get_children()
         for item in items:
             self.treeloc.delete(item)
-        for i in range (0,len(sonars[sonar_idx].locations)):
-            self.treeloc.insert('',0, text = '', values=(sonars[sonar_idx].locations[i].name))
+
+        sonar = sonars[sonar_idx]
+        for location in sonar.locations:
+            self.treeloc.insert('', 'end', values=(location.name,))
+
+    # def viewLocations(self, sonar_idx):
+    #     items = self.treeloc.get_children()
+    #     for item in items:
+    #         self.treeloc.delete(item)
+    #     for i in range (0,len(sonars[sonar_idx].locations)):
+    #         location = sonars[sonar_idx].locations[i].name
+    #         self.treeloc.insert('', 0, values= ('{}'.format(location)))
 
    
 
