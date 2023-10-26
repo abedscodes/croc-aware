@@ -6,8 +6,7 @@ import tkinter.messagebox
 
 locations_dict = {}
 sonars =[]
-admins=[]
-riverSystem = {}
+admins=[]        #list to store admins of system
 
 class Sonar():
     def __init__(self, id ='', name='', locations = [], safety=True):
@@ -16,7 +15,7 @@ class Sonar():
         self.safety = safety
         self.locations = locations
     
-
+    #add location object to list of locations
     def add_location(self, item):
         self.locations.append(item)
     
@@ -39,7 +38,7 @@ class Admin():
         self.password = password
 
 
-
+#create a default admin
 admins.append(Admin(username='admin', password= 'admin'))
 
 class GUI(object):
@@ -96,14 +95,6 @@ class GUI(object):
         Button(label_frame, text="Log In", command=self.login, bg="midnightblue", fg="white",
                font="helvetica 9 bold").grid(row=4, column=2, sticky=E, padx=5, pady=5) 
     
-    #end of first GUI window setup
-    def login_check(self):
-        for i in range(0,len(admins)):
-
-            if (admins[i].username == self.username_field.get()) and (admins[i].password == self.password_field.get()):
-                return True
-        return False
-    
     def viewLocationsMain(self):
 
         items = self.tree.get_children()
@@ -115,15 +106,20 @@ class GUI(object):
             else:
                 output = 'Unsafe'                
             self.tree.insert('', 0, values= (place.name, output))
+
+    #end of first GUI window setup
+    def login_check(self):
+        for i in range(0,len(admins)):
+
+            if (admins[i].username == self.username_field.get()) and (admins[i].password == self.password_field.get()):
+                return True
+        return False
     
     def login(self):
         if self.login_check():
-
             self.admin_window()
-
         else:
             tkinter.messagebox.showwarning('Invalid Login','Username and password combination incorrect')
-   
 
 
     def admin_window(self):
@@ -136,7 +132,6 @@ class GUI(object):
         self.windowad.geometry("500x500")
         self.windowad.resizable(width=False, height = False)
         columns = ('id','location','safety')
-
         label_frame = LabelFrame(self.windowad, text='Admin', bg="cadetblue2", 
                                  fg ="midnightblue", font="helvetica 11 bold")
         label_frame.grid(row=0, column=0, padx=8, pady=8, sticky=W)
@@ -181,6 +176,8 @@ class GUI(object):
                font ="helvetica 9 bold").grid(row=9,column=0,sticky=W, pady = 10, padx=10)
         self.windowad.mainloop()
     
+    #Functions to validate input
+
     def sid_check(self):
         if self.id_field.get().isnumeric() and len(self.id_field.get())>0:
             return True
@@ -196,7 +193,8 @@ class GUI(object):
             return True
         else:
             return False
-        
+
+    #Ensures no copy of sonars created    
     def sonar_id_exists(self, search_id):
         for sonar in sonars:
             if int(sonar.id) == int(search_id):
@@ -205,7 +203,7 @@ class GUI(object):
     
 
 
-    #methods for Validation
+    #methods for adding a sonar to list of sonars
     def add_sonar(self):
         if self.sid_check() and self.slocation_check() and self.safety_check():
             if not self.sonar_id_exists(self.id_field.get()):
@@ -228,7 +226,7 @@ class GUI(object):
         else:
             tkinter.messagebox.showwarning('Input Error', 'ID must be numeric only. Sonar Location must only contain alphabets. Safety must be "Yes" or "No"')
     
-        #obtains index number of sonar in the list 'sonars'  
+    #obtains index number of sonar in the list 'sonars'  
     def match_sonar(self, search_id):
         for i in range (0,len(sonars)):
             if int(sonars[i].id) == int(search_id):
@@ -240,7 +238,8 @@ class GUI(object):
             if sonars[sonar_no].locations[i].name == location:
                 return i
 
-    def view_sonars(self):
+    #sonar list viewed in admin_window
+    def view_sonars(self): 
         items = self.tree.get_children()
         for item in items:
             self.tree.delete(item)
@@ -252,6 +251,7 @@ class GUI(object):
             self.tree.insert('', 0, values= ('{}'.format(sonars[i].id),
                                              '{}'.format(sonars[i].name), safety))
 
+    #function deletes sonar from list of sonars, unlinks to the locations.
     def delete_sonar(self):
         self.message['text']=''
         id = self.tree.item(self.tree.selection())['values'][0]
@@ -266,7 +266,8 @@ class GUI(object):
                         locations_dict[location].pop()
                         self.location_safety(location)
                         len(locations_dict[location])
-
+       
+         
         self.empty_locations()
         if sonar_index<len(sonars)-1:
             for i in range(sonar_index,len(sonars)-1):
@@ -275,6 +276,8 @@ class GUI(object):
         self.message['text']='Sonar ID {} deleted'.format(id)
         self.view_sonars()
     
+    # If location has no more connected sonars, it is 
+    # deleted from the locations dictionary 
     def empty_locations(self):
         empty_locs = []
         for loc in locations_dict:    
@@ -283,7 +286,7 @@ class GUI(object):
         for loc in empty_locs:
             locations_dict.pop(loc)
                 
-    #ensures program doesnt crash, and function to delete spot is called successfully
+    #functions ensure program doesnt crash, and functions are called successfully
     def deleteButtonClicked(self):
         try:
             self.tree.item(self.tree.selection())['values'][0]
@@ -300,9 +303,8 @@ class GUI(object):
             return
         self.location_window()
 
-    
 
-    # new window(GUI) to edit locations with sonar
+    # new window(GUI) to edit locations in each sonar
     def location_window(self):
         sonar = self.tree.item(self.tree.selection())['values'][0]
         title = self.tree.item(self.tree.selection())['values'][1]
@@ -325,8 +327,6 @@ class GUI(object):
         Button(label_frame, text='Add', command=lambda: self.add_location(sonar, self.loc_field.get()), 
                bg = "midnightblue",fg="white", font ="helvetica 9 bold").grid(row=4, column= 2, sticky=E)
         
-        #hereee
-
 
         self.treeloc = ttk.Treeview(self.windowloc, columns=columns,show='headings', style='Treeview')
         self.treeloc.grid(row=6, column = 0, columnspan = 1, sticky='e')
@@ -335,7 +335,6 @@ class GUI(object):
         self.treeloc.column('locations', stretch = False, width=250) 
         self.scrollbar = Scrollbar(master = self.windowloc, orient='vertical',command=self.treeloc.yview)
         self.scrollbar.grid(row=6,column=0,sticky='nse')
-        
         
         sonar_index = self.match_sonar(sonar)
         
@@ -353,12 +352,16 @@ class GUI(object):
         else:
             return False
     
+    #checks if same location object exists, 
+    # returns the object if exists, else 0
     def location_object(self, loc_name):
         for place in locations_dict:
             if place.name == loc_name:
                 return place
         return 0
 
+    #Updates safety status of location according 
+    # to the sonars they are dependent on.
     def location_safety(self, location_obj):
         safe = True
         for sonar in locations_dict[location_obj]:
@@ -383,16 +386,13 @@ class GUI(object):
             if new_loc not in sonars[sonar_index].locations:
 
                 sonars[sonar_index].add_location(new_loc)
-                locations_dict[new_loc].append(sonars[sonar_index])
-                
+                locations_dict[new_loc].append(sonars[sonar_index])   
             else:                
-                tkinter.messagebox.showwarning('Error', 'Location already exists.')
-                
+                tkinter.messagebox.showwarning('Error', 'Location already exists.')   
                               
             self.location_safety(new_loc)
             self.viewLocations(sonar_index)
             self.loc_field.delete(0, END)
-        
         else:
             tkinter.messagebox.showwarning('Input Error', 'Name must only contain alphabets.')
             return
@@ -416,9 +416,7 @@ class GUI(object):
         locations_dict[loc_obj].pop()
         self.location_safety(loc_obj)
         self.empty_locations()
-        self.viewLocations(sonar_index)
-
-                
+        self.viewLocations(sonar_index)              
     
     def viewLocations(self, sonar_idx):
         items = self.treeloc.get_children()
@@ -427,14 +425,7 @@ class GUI(object):
         for i in range (0,len(sonars[sonar_idx].locations)):
             self.treeloc.insert('',0, text = '', values=(sonars[sonar_idx].locations[i].name))
 
-    #views table of updated balance at the end of every period(4 weeks)
-    # def addButtonClickedLoc(self,sonar, location):
-    #     try:
-    #         self.tree.item(self.tree.selection())['values'][0]
-    #     except IndexError as e:
-    #         tkinter.messagebox.showwarning('Selection Error', 'No Sonar selected.')
-    #         return
-    #     self.add_location(sonar, location)    
+   
 
     def deleteButtonClickedLoc(self,sonar):
         try:
