@@ -126,7 +126,7 @@ class GUI(object):
         self.root.destroy()
         self.windowad = Tk()
         self.windowad.title('Sonar Locations')
-        bg = PhotoImage(file = "croc.png")            #Background added to window
+        bg = PhotoImage(file = "croc-aware-main\croc-aware-main\croc.png")            #Background added to window
         bg_label = Label(self.windowad, image = bg)
         bg_label.place(x=0,y=0, relheight=1,relwidth=1)
         self.windowad.geometry("500x500")
@@ -310,7 +310,7 @@ class GUI(object):
         title = self.tree.item(self.tree.selection())['values'][1]
         self.windowloc = Toplevel()
         self.windowloc.title(title)
-        bgloc = PhotoImage(file = "loc.png")            #Background added to window
+        bgloc = PhotoImage(file = "croc-aware-main\loc.png")            #Background added to window
         bg_label = Label(self.windowloc, image= bgloc)
         bg_label.place(x=0,y=0, relheight=1,relwidth=1)
         self.windowloc.geometry("400x500")
@@ -452,7 +452,7 @@ class GUI(object):
         self.windowad.destroy()
         root = Tk()
         root.title('Croc-Aware')
-        bg = PhotoImage(file = "croc.png")
+        bg = PhotoImage(file = "croc-aware-main\croc-aware-main\croc.png")
         bg_label = Label(root, image = bg)
         bg_label.place(x=0,y=0, relheight=1,relwidth=1)
         application = GUI(root)
@@ -465,7 +465,7 @@ class GUI(object):
 if __name__ == '__main__':
     root = Tk()
     root.title('Croc-aware')
-    bg = PhotoImage(file = "croc.png")
+    bg = PhotoImage(file = "croc-aware-main\croc-aware-main\croc.png")
     bg_label = Label(root, image = bg)
     bg_label.place(x=0,y=0, relheight=1,relwidth=1)
     application = GUI(root)
